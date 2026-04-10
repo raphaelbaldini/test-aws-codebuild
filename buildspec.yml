@@ -1,0 +1,38 @@
+# CodeBuild equivalent of .github/workflows/workflow.yml (conceptual map):
+#
+# | GitHub Actions              | buildspec.yml                          |
+# |-----------------------------|----------------------------------------|
+# | on: push                    | CodeBuild: webhook / StartBuild / etc. |
+# | jobs.*.runs-on: codebuild-… | CodeBuild: THIS project’s env + image  |
+# | steps: - run: echo …        | phases.*.commands: same shell lines    |
+#
+# The workflow runs ON a CodeBuild-hosted runner (runs-on label). This file is what
+# a *classic* CodeBuild project runs: one container, phases run in order.
+
+version: 0.2
+
+phases:
+  # Optional: dependencies / tooling (like a first "step" or setup action).
+  install:
+    commands:
+      - echo "(install) optional setup — empty is fine"
+
+  # Optional: lint, tests before main work (like pre-steps in GHA).
+  pre_build:
+    commands:
+      - echo "(pre_build) optional checks"
+
+  # Main work — maps to your single `run: echo "Hello World"` step.
+  build:
+    commands:
+      - echo "Hello World"
+
+  # Optional: runs even if build fails (buildspec has nuances; see AWS docs).
+  # post_build:
+  #   commands:
+  #     - echo "cleanup"
+
+# Optional: artifacts, cache, reports — no GHA equivalent in your tiny workflow.
+# artifacts:
+#   files:
+#     - '**/*'
